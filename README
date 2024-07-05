@@ -5,4 +5,8 @@ For debug:
     - GoogleTest
     - GL
 
+To download dependencies:
+
 sudo apt install cmake libsdl2-dev g++ 
+
+Now you can build.
