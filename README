@@ -1,0 +1,6 @@
+Requires:
+    - SDL2
+For debug:
+    - ImGUI
+    - GoogleTest
+    - GL
