@@ -13,8 +13,7 @@ CPU::CPU(u8 *mem, u16 memSize)
 
 CPU::~CPU()
 {
-	if (Memory != nullptr)
-		delete[] Memory;
+	// CPU does not delete memory!
 	delete SP;
 }
 
@@ -54,7 +53,7 @@ u16 CPU::getBytesAfterPC(u16 numberof)
 		return 0;
 }
 
-CPU::CPU_STATE CPU::getCPUstate() { return CPUstate; }
+CPU::CPU_STATE CPU::getState() { return CPUstate; }
 
 u16 CPU::getRegPC() { return PC; }
 

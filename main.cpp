@@ -2,23 +2,37 @@
 
 #include <iostream>
 
+#include "Debugger.h"
+
 using namespace std;
 
 int main()
 {
-	/*u16 memSize = 0xFFFF;
-	u8* mem = new u8[memSize + 1];
+	u64 memSize = 0xFFFF;
+	u8 *mem = new u8[memSize + 1];
+	CPU MOSCPU(mem, (u16)memSize);
 
-	CPU MOSCPU(mem, memSize);
-	MOSCPU.LoadBinary("prog.bin", 0x0200);
+	bool loadBin = false;
+	if (loadBin)
+		MOSCPU.LoadBinary("prog.bin", 0x0200);
 
-	cout << hex << "Starting point: " << (int)MOSCPU.peek(MOSCPU.RESET_VECTOR + 1) << " " << (int)MOSCPU.peek(MOSCPU.RESET_VECTOR) << endl;
+	/*while (MOSCPU.getState() != CPU::POWER_OFF)
+	{
+		const u8 regA = MOSCPU.getRegA();
+		const u8 regX = MOSCPU.getRegX();
+		const u8 regY = MOSCPU.getRegY();
+		const u8 regSP = MOSCPU.getRegSP();
+		const u16 regPC = MOSCPU.getRegPC();
+		const u8 reg = MOSCPU.getRegFlags();
+		const CPU::CPU_STATE state = MOSCPU.getState();
+	}*/
 
-	MOSCPU.StartExecuting();
+	//ImGui::ShowDemoWindow();
 
-	cout << dec << "Result: " << (int)MOSCPU.peek(0x0a) << endl;
+	Debugger debProg;
+	debProg.show();
 
-	delete[] mem;*/
+	delete[] mem;
 
-	cout << "Hello!" << endl;
+	return 0;
 }

@@ -43,7 +43,7 @@ public:
 		POWER_OFF
 	};
 
-	CPU_STATE getCPUstate();
+	CPU_STATE getState();
 
 private:
 	const u16 IRQ_VECTOR = 0xFFFE;

@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(CPU)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(PRJ_NAME CPU)
+
+project(${PRJ_NAME})
 
 set(SOURCE_DIR src)
 set(OPCODES_SRC_DIR ${SOURCE_DIR}/Opcodes)
@@ -31,5 +36,5 @@ set(OPCODES_SRC_FILES
 
 set(SRC_FILES ${OPCODES_SRC_FILES} ${SURF_SRC_FILES})
 
-add_library(CPU STATIC ${SRC_FILES})
-target_include_directories(CPU PUBLIC ${INCLUDE_DIR})
+add_library(${PRJ_NAME} STATIC ${SRC_FILES})
+target_include_directories(${PRJ_NAME} PUBLIC ${INCLUDE_DIR})
