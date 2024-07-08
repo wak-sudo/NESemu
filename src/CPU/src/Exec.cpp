@@ -117,3 +117,19 @@ Porv CPU::handleAdressing(u16 val, ADR_MODE mode)
 	}
 	return result;
 }
+
+void CPU::IRQ()
+{
+	if (Flags.getFlagInd() == 0)
+		Interupt(IRQ_VECTOR);
+}
+
+void CPU::NMI()
+{
+	Interupt(NMI_VECTOR);
+}
+
+void CPU::RESET()
+{
+	Interupt(RESET_VECTOR);
+}

@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-CPU::CPU(u8* mem, u16 memSize)
+CPU::CPU(u8 *mem, u16 memSize)
 {
 	SwapMemory(mem, memSize);
 
@@ -30,26 +30,28 @@ void CPU::PowerUp()
 	RESET(); // Interupt signal.
 }
 
-void CPU::SwapMemory(u8* mem, u16 memSize, bool deleteOld)
+void CPU::SwapMemory(u8 *mem, u16 memSize, bool deleteOld)
 {
-	if (memSize != 0xFFFF) throw std::runtime_error("CPU::SwapMemory(u8* mem, u16 memSize) - Invalid memory size.");
-	if (Memory != mem && deleteOld) delete[] Memory;
+	if (memSize != 0xFFFF)
+		throw std::runtime_error("CPU::SwapMemory(u8* mem, u16 memSize) - Invalid memory size.");
+	if (Memory != mem && deleteOld)
+		delete[] Memory;
 	Memory = mem;
 	MemorySize = memSize;
 }
 
-void CPU::IRQ()
+// This functions returns number of bytes after the program counter position in little endian.
+u16 CPU::getBytesAfterPC(u16 numberof)
 {
-	if (Flags.getFlagInd() == 0)
-		Interupt(IRQ_VECTOR);
+	if (numberof > 2)
+		throw std::runtime_error("u16 CPU::getBytes(u16 numberof)");
+	// We assume that all opcodes are 1 byte!
+	if (numberof == 2)
+		return Util::mergeBytes(Memory[PC + 1], Memory[PC + 2]);
+	else if (numberof == 1)
+		return Memory[PC + 1];
+	else
+		return 0;
 }
 
-void CPU::NMI()
-{
-	Interupt(NMI_VECTOR);
-}
-
-void CPU::RESET()
-{
-	Interupt(RESET_VECTOR);
-}
+CPU::CPU_STATE CPU::getCPUstate() { return CPUstate; }
