@@ -14,20 +14,20 @@ void CPU::op_jmp(u8* arg)
 void CPU::op_jsr(u8* arg)
 {
 	// See how PC is incremented in handleAdressing. 
-	pushStack((PC - 1) >> 8);
-	pushStack(PC - 1);
+	SP->pushStack((PC - 1) >> 8);
+	SP->pushStack(PC - 1);
 	u16 address = (u16)(arg - Memory);
 	PC = address;
 }
 
 void CPU::op_rti()
 {
-	Flags = popStack();
-	PC = mergeBytes(popStack(), popStack());
+	Flags.setVal(SP->popStack());
+	PC = Util::mergeBytes(SP->popStack(), SP->popStack());
 }
 
 void CPU::op_rts()
 {
-	PC = mergeBytes(popStack(), popStack()) + 1;
+	PC = Util::mergeBytes(SP->popStack(), SP->popStack()) + 1;
 }
 

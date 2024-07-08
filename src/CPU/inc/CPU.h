@@ -6,6 +6,11 @@
 
 #include "Global.h"
 
+#include "FlagsReg.h"
+#include "StackReg.h"
+#include "FunPtr.h"
+#include "Util.h"
+
 class CPU
 {
 public:
@@ -13,27 +18,42 @@ public:
 	~CPU();
 	void PowerUp();
 	void StartExecuting();
-	void SwapMemory(u8 *mem, u16 memSize);
-	bool isRunning();
-	u8 peek(u16 position);
+	void SwapMemory(u8 *mem, u16 memSize, bool deleteOld = false);
 
 	void IRQ();
 	void NMI();
-	void Reset();
+	void RESET();
+
+	// Regs:
+	u16 getRegPC();
+	u8 getRegA(); // ACC
+	u8 getRegX();
+	u8 getRegY();
+	u8 getRegSP();
+	u8 getRegFlags();
 
 	void LoadBinary(std::string filePath, u16 startingPoint);
 
-	const u8 STACK_START_LOW = 0xFF;
-	const u8 STACK_START_HIGH = 0x01;
+	enum CPU_STATE
+	{
+		IRQ_SIG,
+		NMI_SIG,
+		RESET_SIG,
+		NORMAL_STATE,
+		POWER_OFF
+	};
+
+	CPU_STATE getCPUstate();
+
+private:
 	const u16 IRQ_VECTOR = 0xFFFE;
 	const u16 RESET_VECTOR = 0xFFFC;
 	const u16 NMI_VECTOR = 0xFFFA;
 
-private:
-	using vFunZeroArg = void (CPU::*)();
-	using vFunOne8Arg = void (CPU::*)(u8 arg);
-	using vFunOne8Ptr = void (CPU::*)(u8 *arg);
-	using vFunOne16Arg = void (CPU::*)(u16 arg);
+	const double COL_SUB_FREQ = 3.579545;
+	const double MASTER_CLOCK_FREQ = 21.477272;
+	const double CLOCK_DIVISOR = 12;
+	const double CPUCLOCK_FREQ = 1.789773;
 
 	// Imp - Implied
 	// Acc - Accumulator
@@ -48,7 +68,7 @@ private:
 	// XIdxZPInd - X-Indexed Zero Page Indirect
 	// ZPIndYIdx - Zero Page Indirect Y-Indexed
 	// Rel - Relative
-	enum AdrModes
+	enum ADR_MODE
 	{
 		Imp,
 		Acc,
@@ -65,116 +85,23 @@ private:
 		Rel,
 	};
 
-	enum enum_CPUstates
-	{
-		IRQ_SIG,
-		NMI_SIG,
-		RESET_SIG,
-		NORMAL_STATE
-	};
-
-	// VFZ - Void funciton zero par
-	// VFU8 - Void function param u8
-	// VFPU8 - Void function param u8*
-	// VFU16 - Void function param u16
-	enum FunPtrType
-	{
-		VFZ,
-		VFU8,
-		VFPU8,
-		VFU16
-	};
-
-	struct FunPtr
-	{
-		FunPtrType type;
-		union
-		{
-			vFunZeroArg zeroArg;
-			vFunOne8Arg u8Arg;
-			vFunOne8Ptr ptru8Arg;
-			vFunOne16Arg u16Arg;
-		};
-
-		FunPtr(vFunZeroArg ptr) : zeroArg(ptr), type(VFZ) {}
-		FunPtr(vFunOne8Arg ptr) : u8Arg(ptr), type(VFU8) {}
-		FunPtr(vFunOne8Ptr ptr) : ptru8Arg(ptr), type(VFPU8) {}
-		FunPtr(vFunOne16Arg ptr) : u16Arg(ptr), type(VFU16) {}
-	};
-
-	// Opcode -> <Cycles, Function, AdrMode>
-	static const std::unordered_map<u8, std::tuple<u8, FunPtr, AdrModes>> OpTable;
-	// AdrModes to instruction bytes. It could be a normal array, but for simplicity the map was chosen.
-	static const std::unordered_map<AdrModes, u8> AdrModeToBytes;
-
-	static const std::unordered_map<enum_CPUstates, vFunZeroArg> CpuStateToFun;
-
-	const double COL_SUB_FREQ = 3.579545;
-	const double MASTER_CLOCK_FREQ = 21.477272;
-	const double CLOCK_DIVISOR = 12;
-	const double CPUCLOCK_FREQ = 1.789773;
-
-	u8 RegA, RegX, RegY, Flags, SP;
-	u16 PC;
+	static std::unordered_map<u8, std::tuple<u8, FunPtr, ADR_MODE>> OpTable;
+	static std::unordered_map<ADR_MODE, u8> AdrModeToBytes;
+	static std::unordered_map<CPU_STATE, FunPtr> CpuStateToFun;
 
 	u8 *Memory; // Is is the best way?
 	u16 MemorySize;
+	u8 RegA, RegX, RegY;
+	FlagsReg Flags;
+	StackReg *SP;
+	u16 PC;
 
-	enum_CPUstates CPUstate;
-
-	// Tells whether the CPU is running.
-	bool debugRunning;
+	CPU_STATE CPUstate;
 
 	void Interupt(u16 vector);
-
-	union Porv
-	{ // Pointer or value
-		u8 *ptr;
-		ul val;
-		Porv() : ptr(nullptr) {}
-	};
-
-	// Sometimes this functio needs to return a number, sometime a pointer to addres in memory,
-	// depending on a addressing mode.
-	Porv handleAdressing(u16 val, AdrModes mode, FunPtrType funType);
-
-	// This functions returns number of bytes after the program counter position in little endian.
-	u16 getBytes(u16 numberof);
-
-	u16 mergeBytes(u8 low, u8 high);
-
-	// used for getting a full Stack address: 0x0100 + SP
-	inline u16 getStackAdr();
-
-	// Execute an opcode.
-	void invokeOpcode(FunPtr fun, u8 noOfBytes, AdrModes mode);
-
-	// Help functions.
-	void setFlagsBit(u8 index, u8 val);
-	u8 getFlagsBit(u8 index);
-	void set_carry(u8 val);
-	u8 get_carry();
-	void set_zero(u8 val);
-	u8 get_zero();
-	void set_ind(u8 val); // Interrupt Disable
-	u8 get_ind();
-	void set_decimal(u8 val);
-	u8 get_decimal();
-	void set_break(u8 val);
-	u8 get_break();
-	// bit 5 - unused?
-	void set_overflow(u8 val);
-	u8 get_overflow();
-	void set_negative(u8 val);
-	u8 get_negative();
-
-	void checkNegative(u8 arg);
-	void checkOverflow(u8 res, u8 a, u8 b);
-	void checkCarry(u16 res);
-	void checkZero(u8 arg);
-
-	u8 popStack();
-	void pushStack(u8 arg);
+	Porv handleAdressing(u16 val, ADR_MODE mode);
+	u16 getBytesAfterPC(u16 numberof);
+	void invokeOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode);
 
 	// Opcodes:
 

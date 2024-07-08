@@ -3,8 +3,8 @@
 void CPU::loadGeneric(u8* reg, u8 arg)
 {
 	*reg = arg;
-	checkZero(*reg);
-	checkNegative(*reg);
+	Flags.testZero(*reg);
+	Flags.testNegative(*reg);
 }
 
 void CPU::storeGeneric(u8 reg, u8* arg)

@@ -1,6 +1,7 @@
 #include "CPU.h"
 
-const std::unordered_map<CPU::AdrModes, u8> CPU::AdrModeToBytes = {
+// AdrModes to instruction bytes. It could be a normal array, but for simplicity the map was chosen.
+std::unordered_map<CPU::ADR_MODE, u8> CPU::AdrModeToBytes = {
 	{Imp, 1},
 	{Acc, 1},
 	{Imm, 2},
@@ -16,15 +17,14 @@ const std::unordered_map<CPU::AdrModes, u8> CPU::AdrModeToBytes = {
 	{Rel, 2}
 };
 
-const std::unordered_map<CPU::enum_CPUstates, CPU::vFunZeroArg> CPU::CpuStateToFun = {
+std::unordered_map<CPU::CPU_STATE, FunPtr> CPU::CpuStateToFun = {
 	{IRQ_SIG, &CPU::IRQ},
 	{NMI_SIG, &CPU::NMI},
-	{RESET_SIG, &CPU::Reset},
+	{RESET_SIG, &CPU::RESET},
 };
 
-// Opcode - <Cycles, Function, AdrMode>
-const std::unordered_map<u8, std::tuple<u8, CPU::FunPtr, CPU::AdrModes>> CPU::OpTable =
-{
+// Opcode -> <Cycles, Function, AdrMode>
+std::unordered_map<u8, std::tuple<u8, FunPtr, CPU::ADR_MODE>> CPU::OpTable = {
 	{0x00, {7, &CPU::op_brk, Imp} },
 	{0x18, {2, &CPU::op_clc, Imp} },
 	{0xD8, {2, &CPU::op_cld, Imp} },

@@ -3,15 +3,15 @@
 void CPU::decGeneric(u8* arg)
 {
 	*arg -= 1;
-	checkNegative(*arg);
-	checkZero(*arg);
+	Flags.testNegative(*arg);
+	Flags.testZero(*arg);
 }
 
 void CPU::incGeneric(u8* arg)
 {
 	*arg += 1;
-	checkNegative(*arg);
-	checkZero(*arg);
+	Flags.testNegative(*arg);
+	Flags.testZero(*arg);
 }
 
 void CPU::op_dec(u8* arg) { decGeneric(arg); }

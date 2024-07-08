@@ -2,18 +2,18 @@
 
 void CPU::op_asl(u8* arg)
 {
-	set_carry( (*arg & 0x80) >> 7 );
+	Flags.setFlagCarry( (*arg & 0x80) >> 7 );
 	*arg <<= 1;
-	checkNegative(*arg);
-	checkZero(*arg);
+	Flags.testNegative(*arg);
+	Flags.testZero(*arg);
 }
 
 void CPU::op_lsr(u8* arg)
 {
-	set_carry(*arg & 1);
+	Flags.setFlagCarry(*arg & 1);
 	*arg >>= 1;
-	set_negative(0);
-	checkZero(*arg);
+	Flags.setFlagNegative(0);
+	Flags.testZero(*arg);
 }
 
 void CPU::op_rol(u8* arg)
@@ -21,9 +21,9 @@ void CPU::op_rol(u8* arg)
 	u8 cbit = *arg & 0x80;
 	*arg <<= 1;
 	*arg |= cbit;
-	set_carry(cbit);
-	checkNegative(*arg);
-	checkZero(*arg);
+	Flags.setFlagCarry(cbit);
+	Flags.testNegative(*arg);
+	Flags.testZero(*arg);
 }
 
 void CPU::op_ror(u8* arg)
@@ -31,7 +31,7 @@ void CPU::op_ror(u8* arg)
 	u8 cbit = *arg & 1;
 	*arg >>= 1;
 	*arg |= (cbit << 7);
-	set_carry(cbit);
-	checkNegative(*arg);
-	checkZero(*arg);
+	Flags.setFlagCarry(cbit);
+	Flags.testNegative(*arg);
+	Flags.testZero(*arg);
 }
