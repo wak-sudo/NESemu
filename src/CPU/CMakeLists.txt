@@ -11,7 +11,6 @@ set(SURF_SRC_FILES
     ${SOURCE_DIR}/Exec.cpp
     ${SOURCE_DIR}/FlagsReg.cpp
     ${SOURCE_DIR}/FunPtr.cpp
-    ${SOURCE_DIR}/Helpers.cpp
     ${SOURCE_DIR}/Loading.cpp
     ${SOURCE_DIR}/StackReg.cpp
     ${SOURCE_DIR}/Util.cpp

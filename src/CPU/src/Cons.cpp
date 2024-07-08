@@ -55,3 +55,15 @@ u16 CPU::getBytesAfterPC(u16 numberof)
 }
 
 CPU::CPU_STATE CPU::getCPUstate() { return CPUstate; }
+
+u16 CPU::getRegPC() { return PC; }
+
+u8 CPU::getRegA() { return RegA; }
+
+u8 CPU::getRegX() { return RegX; }
+
+u8 CPU::getRegY() { return RegY; }
+
+u8 CPU::getRegSP() { return SP->getVal(); }
+
+u8 CPU::getRegFlags() { return Flags.getVal(); }

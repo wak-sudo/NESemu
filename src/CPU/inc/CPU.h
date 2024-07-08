@@ -17,7 +17,7 @@ public:
 	CPU(u8 *mem, u16 memSize);
 	~CPU();
 	void PowerUp();
-	void StartExecuting();
+	void ExecutionStep();
 	void SwapMemory(u8 *mem, u16 memSize, bool deleteOld = false);
 
 	void IRQ();
@@ -101,7 +101,7 @@ private:
 	void Interupt(u16 vector);
 	Porv handleAdressing(u16 val, ADR_MODE mode);
 	u16 getBytesAfterPC(u16 numberof);
-	void invokeOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode);
+	void executeNextOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode);
 
 	// Opcodes:
 

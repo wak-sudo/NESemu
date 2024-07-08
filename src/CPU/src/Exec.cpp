@@ -3,30 +3,23 @@
 #include <stdexcept>
 #include <string>
 
-void CPU::StartExecuting()
+void CPU::ExecutionStep()
 {
-	PowerUp();
-	PC = Util::mergeBytes(Memory[RESET_VECTOR], Memory[RESET_VECTOR + 1]);
 	// Todo: page crossing, branch taking
+	typedef std::unordered_map<u8, std::tuple<u8, FunPtr, CPU::ADR_MODE>>::const_iterator locIter;
 
-	u8 opcode;
-	std::unordered_map<u8, std::tuple<u8, FunPtr, CPU::ADR_MODE>>::const_iterator opMapIt;
-	u8 cycles;
-	ADR_MODE mode;
-	u8 noOfBytes;
-
-	while (CPUstate != POWER_OFF)
+	if (CPUstate != POWER_OFF)
 	{
-		opcode = Memory[PC];
-		opMapIt = OpTable.find(opcode);
+		u8 opcode = Memory[PC];
+		const locIter opMapIt = OpTable.find(opcode);
 		if (opMapIt == OpTable.end())
 			throw std::runtime_error("Unknown opcode: " + std::to_string(opcode));
 		const auto &opInfo = opMapIt->second;
-		cycles = std::get<0>(opInfo);
-		FunPtr fun = std::get<1>(opInfo);
-		mode = std::get<2>(opInfo);
-		noOfBytes = AdrModeToBytes.find(mode)->second; // all modes are inluded so no check, maybe chagne this to a normal array?
-		invokeOpcode(fun, noOfBytes, mode);
+		const u8 cycles = std::get<0>(opInfo);
+		const FunPtr fun = std::get<1>(opInfo);
+		const ADR_MODE mode = std::get<2>(opInfo);
+		const u8 noOfBytes = AdrModeToBytes.find(mode)->second; // all modes are inluded so no check, maybe chagne this to a normal array?
+		executeNextOpcode(fun, noOfBytes, mode);
 
 		// Handles interupts.
 		auto it = CpuStateToFun.find(CPUstate);
@@ -36,7 +29,7 @@ void CPU::StartExecuting()
 }
 
 // Execute an opcode.
-void CPU::invokeOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode)
+void CPU::executeNextOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode)
 {
 	u16 val = getBytesAfterPC(noOfBytes - 1);
 	PC += noOfBytes; // WE SET PC TO NEXT INS BEFORE ADRESS HANDLING AND EXEC.
