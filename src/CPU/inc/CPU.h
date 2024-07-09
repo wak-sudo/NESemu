@@ -4,12 +4,11 @@
 #include <tuple>
 #include <string>
 
-#include "Global.h"
+#include "Util.h"
 
 #include "FlagsReg.h"
 #include "StackReg.h"
 #include "FunPtr.h"
-#include "Util.h"
 
 class CPU
 {

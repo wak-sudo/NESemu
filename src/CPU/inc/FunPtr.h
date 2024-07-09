@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Global.h"
+#include "Util.h"
 #include "Porv.h"
 
 class CPU; // forward declaration.

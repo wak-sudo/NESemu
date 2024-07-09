@@ -2,8 +2,9 @@
 
 #include <stdexcept>
 
-Debugger::Debugger()
+Debugger::Debugger(CPU* cpuObjArg)
 {
+    cpuObj = cpuObjArg;
     initSDL2();
     consWindow();
     consContext();
@@ -73,7 +74,7 @@ void Debugger::consContext()
 void Debugger::consWindow()
 {
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    window = SDL_CreateWindow("NESemu debbuger", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
     if (window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());

@@ -18,7 +18,6 @@ set(SURF_SRC_FILES
     ${SOURCE_DIR}/FunPtr.cpp
     ${SOURCE_DIR}/Loading.cpp
     ${SOURCE_DIR}/StackReg.cpp
-    ${SOURCE_DIR}/Util.cpp
     ${SOURCE_DIR}/Tables.cpp)
 
 set(OPCODES_SRC_FILES

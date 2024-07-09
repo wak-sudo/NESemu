@@ -19,6 +19,10 @@ set(SRC_FILES
 add_library(${PRJ_NAME} STATIC ${SRC_FILES})
 target_include_directories(${PRJ_NAME} PUBLIC ${INCLUDE_DIR})
 
+# Include CPU
+
+target_include_directories(${PRJ_NAME} PUBLIC ../CPU/inc)
+
 #ImGui:
 
 set(IMGUI_DIR extLibs/imgui)
