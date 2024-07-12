@@ -11,9 +11,6 @@ void Debugger::show()
     bool done;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    u64 memSize = 1024;
-    u8 *mem = new u8[memSize];
-
     MemoryEditor mem_edit;
 
     while (!done)
@@ -56,9 +53,9 @@ void Debugger::show()
             ImGui::End();
         }*/
 
-        // mem_edit.DrawWindow("Memory Editor", mem, memSize);
+        // mem_edit.DrawWindow("Memory Editor", memory, memorySize);
 
-        showCPUstats();
+        showCPUstate();
 
         ImGui::Render();
         glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
@@ -68,45 +65,24 @@ void Debugger::show()
         SDL_GL_SwapWindow(window);
     }
 
-    delete[] mem;
 }
 
-void Debugger::showCPUstats()
+void Debugger::showCPUstate()
 {
     ImGui::SetNextWindowSize(ImVec2(640, 780), ImGuiCond_FirstUseEver);
     bool closed;
     ImGui::Begin("CPU state", &closed);
 
-    static Util::NumericalSystems setNumeralSystem = Util::HEX; // it has to be static, dunno why.
+    // static Util::NumericalSystems tempNumeralSystem = Util::HEX; // it has to be static, dunno why.
 
-    std::string cusPrintReg(u8 val, std::string & update)
-    {
-        update = Util::toSystem(val, setNumeralSystem);
-        return Util::toSystem(val, setNumeralSystem);
-    }
-
-    std::string cusPrintFlags(u8 val )
-
-    std::string cusPrint(u16 val, std::string & update)
-    {
-        update = Util::toSystem(val, setNumeralSystem);
-        return Util::toSystem(val, setNumeralSystem);
-    }
-
-    if (ImGui::RadioButton("Hex", setNumeralSystem == Util::HEX))
-    {
-        setNumeralSystem = Util::HEX;
-    }
+    if (ImGui::RadioButton("Hex", numeralSystem == Util::HEX))
+        numeralSystem = Util::HEX;
     ImGui::SameLine();
-    if (ImGui::RadioButton("Dec", setNumeralSystem == Util::DEC))
-    {
-        setNumeralSystem = Util::DEC;
-    }
+    if (ImGui::RadioButton("Dec", numeralSystem == Util::DEC))
+        numeralSystem = Util::DEC;
     ImGui::SameLine();
-    if (ImGui::RadioButton("Bin", setNumeralSystem == Util::BIN))
-    {
-        setNumeralSystem = Util::BIN;
-    }
+    if (ImGui::RadioButton("Bin", numeralSystem == Util::BIN))
+        numeralSystem = Util::BIN;
 
     if (ImGui::BeginTable("table", 3))
     {
@@ -118,12 +94,12 @@ void Debugger::showCPUstats()
     {
         if (ImGui::BeginTable("table", 3))
         {
-            printSingleRow("Reg A:", cusPrint(cpuObj->getRegA(), prevStates[0]), prevStates[0]);
-            printSingleRow("Reg X:", cusPrint(cpuObj->getRegX(), prevStates[1]), prevStates[1]);
-            printSingleRow("Reg Y:", cusPrint(cpuObj->getRegY(), prevStates[2]), prevStates[2]);
-            printSingleRow("Reg PC:", cusPrint(cpuObj->getRegPC(), prevStates[3]), prevStates[3]);
-            printSingleRow("Reg SP:", cusPrint(cpuObj->getRegSP(), prevStates[4]), prevStates[4]);
-            printSingleRow("Reg Flags:", cusPrint(cpuObj->getRegFlags(), prevStates[5]), prevStates[5]);
+            printByteAndUpdate("Reg A:", cpuObj->getRegA(), prevRegA);
+            printByteAndUpdate("Reg X:", cpuObj->getRegX(), prevRegX);
+            printByteAndUpdate("Reg Y:", cpuObj->getRegY(), prevRegY);
+            printShortAndUpdate("Reg PC:", cpuObj->getRegPC(), prevRegPC);
+            printByteAndUpdate("Reg SP:", cpuObj->getRegSP(), prevRegSP);
+            printFlagsRegAndUpdate();
             ImGui::EndTable();
         }
     }
@@ -132,14 +108,14 @@ void Debugger::showCPUstats()
     {
         if (ImGui::BeginTable("table", 3))
         {
-            printSingleRow("Carry", cusPrint(cpuObj->getRegA(), prevStates[6]), prevStates[6]);
-            printSingleRow("Zero", cusPrint(cpuObj->getRegA(), prevStates[7]), prevStates[7]);
-            printSingleRow("Interrupt Disable", cusPrint(cpuObj->getRegA(), prevStates[8]), prevStates[8]);
-            printSingleRow("Decimal", cusPrint(cpuObj->getRegA(), prevStates[9]), prevStates[9]);
-            printSingleRow("B flag", cusPrint(cpuObj->getRegA(), prevStates[10]), prevStates[10]);
-            printSingleRow("Unused", cusPrint(cpuObj->getRegA(), prevStates[11]), prevStates[11]);
-            printSingleRow("Overflow", cusPrint(cpuObj->getRegA(), prevStates[12]), prevStates[12]);
-            printSingleRow("Negative", cusPrint(cpuObj->getRegA(), prevStates[13]), prevStates[13]);
+            printFlagState("Carry", &FlagsReg::getFlagCarry);
+            printFlagState("Zero", &FlagsReg::getFlagZero);
+            printFlagState("Interrupt Disable", &FlagsReg::getFlagInd);
+            printFlagState("Decimal", &FlagsReg::getFlagDecimal);
+            printFlagState("Break", &FlagsReg::getFlagBreak);
+            printFlagState("Unused", &FlagsReg::getFlagUnused);
+            printFlagState("Overflow", &FlagsReg::getFlagOverflow);
+            printFlagState("Negative", &FlagsReg::getFlagNegative);
             ImGui::EndTable();
         }
     }
@@ -148,19 +124,25 @@ void Debugger::showCPUstats()
     {
         if (ImGui::BeginTable("table", 3))
         {
-            printSingleRow("Name:", "Old cont", "New cont");
-            printSingleRow("Adr. mode:", "Old cont", "New cont");
-            printSingleRow("No. of bytes:", "Old cont", "New cont");
-            printSingleRow("Opcode:", "Old cont", "New cont");
-            printSingleRow("Cycles:", "Old cont", "New cont");
-            printSingleRow("Argument:", "Old cont", "New cont");
+            const u8 currentOpcode = cpuObj->getCurrentIns();
+            const auto opcodeInfo = cpuObj->getOpcodeInfo(currentOpcode);
+            const u8 currentCycles = std::get<0>(opcodeInfo);
+            const CPU::ADR_MODE currentMode = std::get<1>(opcodeInfo);
+            const u8 currentBytes = std::get<2>(opcodeInfo);
+
+            printNameAndUpdate(); // maybe printSingleRow
+            printByteAndUpdate("Opcode:", currentOpcode, prevOpcodeNumber);
+            printAdrModeAndUpdate(currentMode);
+            printByteAndUpdate("No. of bytes:", currentBytes, prevNoOfBytes);
+            printByteAndUpdate("Cycles:", currentCycles, prevCycles);
+            printArgument(currentBytes);
             ImGui::EndTable();
         }
     }
 
     if (ImGui::BeginTable("table", 3))
     {
-        printSingleRow("CPU state:", "Old cont", "New cont");
+        printCPUstate();
         ImGui::EndTable();
     }
 
@@ -170,15 +152,4 @@ void Debugger::showCPUstats()
     }
 
     ImGui::End();
-}
-
-void Debugger::printSingleRow(const char *rowName, const char *fstItem, const char *sndItem)
-{
-    ImGui::TableNextRow();
-    ImGui::TableNextColumn();
-    ImGui::TextUnformatted(rowName);
-    ImGui::TableNextColumn();
-    ImGui::TextUnformatted(fstItem);
-    ImGui::TableNextColumn();
-    ImGui::TextUnformatted(sndItem);
 }

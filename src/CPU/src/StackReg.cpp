@@ -1,6 +1,6 @@
 #include "StackReg.h"
 
-u8 StackReg::getVal() { return reg; }
+u8 StackReg::getVal() const { return reg; }
 
 void StackReg::setVal(u8 val) { reg = val; }
 
@@ -18,7 +18,7 @@ void StackReg::pushStack(u8 val)
 }
 
 
-u16 StackReg::getFullStackAdr()
+u16 StackReg::getFullStackAdr() const
 {
 	const u16 stackPage = (u16)STACK_START_HIGH << 8;
 	return stackPage + reg;

@@ -19,6 +19,8 @@ namespace Util
         BIN
     };
     std::string toSystem(u64 val, NumericalSystems targetSys);
+
+    u16 getBytesFromMemAfterIdx(u8* mem, u16 idx, u16 numberOfBytes);
 }
 
 #define KB 1024

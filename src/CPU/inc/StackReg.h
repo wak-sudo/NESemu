@@ -13,8 +13,8 @@ public:
     StackReg(u8 *memoryPtr) : reg(STACK_START_LOW), memory(memoryPtr) {}
     u8 popStack();
     void pushStack(u8 val);
-    u8 getVal();
+    u8 getVal() const;
     void setVal(u8 val);
     void reset();
-    u16 getFullStackAdr();
+    u16 getFullStackAdr() const;
 };

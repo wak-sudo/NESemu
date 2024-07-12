@@ -8,9 +8,9 @@ using namespace std;
 
 int main()
 {
-	u64 memSize = 0xFFFF;
-	u8 *mem = new u8[memSize + 1];
-	CPU MOSCPU(mem, (u16)memSize);
+	u64 memSize = 0xFFFF + 1;
+	u8 *mem = new u8[memSize];
+	CPU MOSCPU(mem, memSize);
 
 	bool loadBin = false;
 	if (loadBin)
@@ -29,7 +29,7 @@ int main()
 
 	//ImGui::ShowDemoWindow();
 
-	Debugger debProg;
+	Debugger debProg(&MOSCPU, mem, memSize);
 	debProg.show();
 
 	delete[] mem;

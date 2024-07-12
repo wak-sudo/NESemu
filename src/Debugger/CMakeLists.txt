@@ -10,16 +10,22 @@ project(${PRJ_NAME})
 # Debugger
 
 set(SOURCE_DIR src)
-set(INCLUDE_DIR inc ../incGlobal)
+set(INCLUDE_DIR inc)
 
 set(SRC_FILES
     ${SOURCE_DIR}/Cons.cpp
+    ${SOURCE_DIR}/Print.cpp
+    ${SOURCE_DIR}/Tables.cpp
     ${SOURCE_DIR}/Debugger.cpp)
 
 add_library(${PRJ_NAME} STATIC ${SRC_FILES})
 target_include_directories(${PRJ_NAME} PUBLIC ${INCLUDE_DIR})
 
-# Include CPU
+# Util
+
+target_include_directories(${PRJ_NAME} PUBLIC ../incGlobal)
+
+# CPU
 
 target_include_directories(${PRJ_NAME} PUBLIC ../CPU/inc)
 

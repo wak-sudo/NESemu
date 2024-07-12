@@ -1,0 +1,3 @@
+/home/wak/Desktop/NESemu/src/incGlobal/build/CMakeFiles/Util.dir
+/home/wak/Desktop/NESemu/src/incGlobal/build/CMakeFiles/edit_cache.dir
+/home/wak/Desktop/NESemu/src/incGlobal/build/CMakeFiles/rebuild_cache.dir

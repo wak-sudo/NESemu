@@ -9,7 +9,7 @@ project(${PRJ_NAME})
 
 set(SOURCE_DIR src)
 set(OPCODES_SRC_DIR ${SOURCE_DIR}/Opcodes)
-set(INCLUDE_DIR inc ../incGlobal)
+set(INCLUDE_DIR inc)
 
 set(SURF_SRC_FILES
     ${SOURCE_DIR}/Cons.cpp
@@ -37,3 +37,6 @@ set(SRC_FILES ${OPCODES_SRC_FILES} ${SURF_SRC_FILES})
 
 add_library(${PRJ_NAME} STATIC ${SRC_FILES})
 target_include_directories(${PRJ_NAME} PUBLIC ${INCLUDE_DIR})
+
+# Util
+target_include_directories(${PRJ_NAME} PUBLIC ../incGlobal)

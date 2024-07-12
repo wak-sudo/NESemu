@@ -13,23 +13,25 @@
 class CPU
 {
 public:
-	CPU(u8 *mem, u16 memSize);
+	CPU(u8 *mem, u64 memSize);
 	~CPU();
 	void PowerUp();
 	void ExecutionStep();
-	void SwapMemory(u8 *mem, u16 memSize, bool deleteOld = false);
+	void SwapMemory(u8 *mem, u64 memSize, bool deleteOld = false);
 
 	void IRQ();
 	void NMI();
 	void RESET();
 
 	// Regs:
-	u16 getRegPC();
-	u8 getRegA(); // ACC
-	u8 getRegX();
-	u8 getRegY();
-	u8 getRegSP();
-	u8 getRegFlags();
+	u16 getRegPC() const;
+	u8 getRegA() const; // ACC
+	u8 getRegX() const;
+	u8 getRegY() const;
+	u8 getRegSP() const;
+	u8 getRegFlagsVal() const;
+	FlagsReg getRegFlagsObj() const;
+	u8 getCurrentIns() const; // this may only be needed for debug.
 
 	void LoadBinary(std::string filePath, u16 startingPoint);
 
@@ -41,18 +43,6 @@ public:
 		NORMAL_STATE,
 		POWER_OFF
 	};
-
-	CPU_STATE getState();
-
-private:
-	const u16 IRQ_VECTOR = 0xFFFE;
-	const u16 RESET_VECTOR = 0xFFFC;
-	const u16 NMI_VECTOR = 0xFFFA;
-
-	const double COL_SUB_FREQ = 3.579545;
-	const double MASTER_CLOCK_FREQ = 21.477272;
-	const double CLOCK_DIVISOR = 12;
-	const double CPUCLOCK_FREQ = 1.789773;
 
 	// Imp - Implied
 	// Acc - Accumulator
@@ -84,12 +74,26 @@ private:
 		Rel,
 	};
 
-	static std::unordered_map<u8, std::tuple<u8, FunPtr, ADR_MODE>> OpTable;
-	static std::unordered_map<ADR_MODE, u8> AdrModeToBytes;
-	static std::unordered_map<CPU_STATE, FunPtr> CpuStateToFun;
+	std::tuple<u8, CPU::ADR_MODE, u8> getOpcodeInfo(u8 opcode) const;
+
+	CPU_STATE getState() const;
+
+private:
+	const u16 IRQ_VECTOR = 0xFFFE;
+	const u16 RESET_VECTOR = 0xFFFC;
+	const u16 NMI_VECTOR = 0xFFFA;
+
+	const double COL_SUB_FREQ = 3.579545;
+	const double MASTER_CLOCK_FREQ = 21.477272;
+	const double CLOCK_DIVISOR = 12;
+	const double CPUCLOCK_FREQ = 1.789773;
+
+	static const std::unordered_map<u8, std::tuple<u8, FunPtr, ADR_MODE>> OpTable;
+	static const std::unordered_map<ADR_MODE, u8> AdrModeToBytes;
+	static const std::unordered_map<CPU_STATE, FunPtr> CpuStateToFun;
 
 	u8 *Memory; // Is is the best way?
-	u16 MemorySize;
+	u64 MemorySize;
 	u8 RegA, RegX, RegY;
 	FlagsReg Flags;
 	StackReg *SP;
@@ -99,7 +103,6 @@ private:
 
 	void Interupt(u16 vector);
 	Porv handleAdressing(u16 val, ADR_MODE mode);
-	u16 getBytesAfterPC(u16 numberof);
 	void executeNextOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode);
 
 	// Opcodes:

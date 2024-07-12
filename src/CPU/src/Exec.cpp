@@ -24,14 +24,18 @@ void CPU::ExecutionStep()
 		// Handles interupts.
 		auto it = CpuStateToFun.find(CPUstate);
 		if (it != CpuStateToFun.end())
-			(it->second).invoke(this, Porv());
+		{
+			FunPtr fun = it->second;
+
+		}
+		//	().invoke(this, Porv());
 	}
 }
 
 // Execute an opcode.
 void CPU::executeNextOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode)
 {
-	u16 val = getBytesAfterPC(noOfBytes - 1);
+	u16 val = Util::getBytesFromMemAfterIdx(Memory, PC, noOfBytes - 1);
 	PC += noOfBytes; // WE SET PC TO NEXT INS BEFORE ADRESS HANDLING AND EXEC.
 	Porv arg = handleAdressing(val, mode);
 	fun.invoke(this, arg);

@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-CPU::CPU(u8 *mem, u16 memSize)
+CPU::CPU(u8 *mem, u64 memSize)
 {
 	SwapMemory(mem, memSize);
 
@@ -29,7 +29,7 @@ void CPU::PowerUp()
 	RESET(); // Interupt signal.
 }
 
-void CPU::SwapMemory(u8 *mem, u16 memSize, bool deleteOld)
+void CPU::SwapMemory(u8 *mem, u64 memSize, bool deleteOld)
 {
 	if (memSize != 0xFFFF)
 		throw std::runtime_error("CPU::SwapMemory(u8* mem, u16 memSize) - Invalid memory size.");
@@ -39,30 +39,35 @@ void CPU::SwapMemory(u8 *mem, u16 memSize, bool deleteOld)
 	MemorySize = memSize;
 }
 
-// This functions returns number of bytes after the program counter position in little endian.
-u16 CPU::getBytesAfterPC(u16 numberof)
+std::tuple<u8, CPU::ADR_MODE, u8> CPU::getOpcodeInfo(u8 opcode) const
 {
-	if (numberof > 2)
-		throw std::runtime_error("u16 CPU::getBytes(u16 numberof)");
-	// We assume that all opcodes are 1 byte!
-	if (numberof == 2)
-		return Util::mergeBytes(Memory[PC + 1], Memory[PC + 2]);
-	else if (numberof == 1)
-		return Memory[PC + 1];
-	else
-		return 0;
+	const auto emptyTuple = std::make_tuple(0, Imp, 0);
+	auto itOpTable = OpTable.find(opcode);
+	if (itOpTable == OpTable.end())
+		return emptyTuple;
+	const ADR_MODE mode = std::get<2>(itOpTable->second);
+	auto itBytes = AdrModeToBytes.find(mode);
+	if (itBytes == AdrModeToBytes.end())
+		return emptyTuple;
+	const u8 cycles = std::get<0>(itOpTable->second);
+	const u8 bytes = itBytes->second;
+	return std::make_tuple(cycles, mode, bytes);
 }
 
-CPU::CPU_STATE CPU::getState() { return CPUstate; }
+CPU::CPU_STATE CPU::getState() const { return CPUstate; }
 
-u16 CPU::getRegPC() { return PC; }
+u16 CPU::getRegPC() const { return PC; }
 
-u8 CPU::getRegA() { return RegA; }
+u8 CPU::getRegA() const { return RegA; }
 
-u8 CPU::getRegX() { return RegX; }
+u8 CPU::getRegX() const { return RegX; }
 
-u8 CPU::getRegY() { return RegY; }
+u8 CPU::getRegY() const { return RegY; }
 
-u8 CPU::getRegSP() { return SP->getVal(); }
+u8 CPU::getRegSP() const { return SP->getVal(); }
 
-u8 CPU::getRegFlags() { return Flags.getVal(); }
+u8 CPU::getRegFlagsVal() const { return Flags.getVal(); }
+
+FlagsReg CPU::getRegFlagsObj() const { return Flags; }
+
+u8 CPU::getCurrentIns() const { return Memory[PC]; }

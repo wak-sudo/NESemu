@@ -2,9 +2,11 @@
 
 #include <stdexcept>
 
-Debugger::Debugger(CPU* cpuObjArg)
+Debugger::Debugger(CPU *cpuObjArg, u8 *memoryArg, u64 memorySizeArg)
 {
     cpuObj = cpuObjArg;
+    memory = memoryArg;
+    memorySize = memorySizeArg;
     initSDL2();
     consWindow();
     consContext();
