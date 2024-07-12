@@ -1,0 +1,3 @@
+/home/wak/Desktop/NESemu/src/Debugger/build/CMakeFiles/Debugger.dir
+/home/wak/Desktop/NESemu/src/Debugger/build/CMakeFiles/edit_cache.dir
+/home/wak/Desktop/NESemu/src/Debugger/build/CMakeFiles/rebuild_cache.dir

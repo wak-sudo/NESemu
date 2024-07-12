@@ -1,4 +1,4 @@
-# Install script for directory: /home/wak/Desktop/NESemu/src/incGlobal
+# Install script for directory: /home/wak/Desktop/NESemu/src/Debugger
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/wak/Desktop/NESemu/src/incGlobal/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/wak/Desktop/NESemu/src/Debugger/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

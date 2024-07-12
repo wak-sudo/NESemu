@@ -1,2 +1,2 @@
-# Empty dependencies file for Util.
+# Empty dependencies file for Debugger.
 # This may be replaced when dependencies are built.
