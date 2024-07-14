@@ -1,30 +1,8 @@
-#include "Debugger.h"
+#include "DebuggerImgui.h"
 
 #include <stdexcept>
 
-Debugger::Debugger(CPU *cpuObjArg, u8 *memoryArg, u64 memorySizeArg)
-{
-    cpuObj = cpuObjArg;
-    memory = memoryArg;
-    memorySize = memorySizeArg;
-    initSDL2();
-    consWindow();
-    consContext();
-    setupImgui();
-}
-
-Debugger::~Debugger()
-{
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
-
-    SDL_GL_DeleteContext(gl_context);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-}
-
-void Debugger::initSDL2()
+void DebuggerImgui::initSDL2()
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
     {
@@ -66,14 +44,14 @@ void Debugger::initSDL2()
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 }
 
-void Debugger::consContext()
+void DebuggerImgui::consContext()
 {
     gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 }
 
-void Debugger::consWindow()
+void DebuggerImgui::consWindow()
 {
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     window = SDL_CreateWindow("NESemu debbuger", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
@@ -84,7 +62,7 @@ void Debugger::consWindow()
     }
 }
 
-void Debugger::setupImgui()
+void DebuggerImgui::setupImgui()
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -99,4 +77,23 @@ void Debugger::setupImgui()
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version.c_str());
+}
+
+DebuggerImgui::DebuggerImgui(CPU *cpuObjArg, u8 *memoryArg, u64 memorySizeArg) : DebuggerStrings(cpuObjArg, memoryArg, memorySizeArg)
+{
+    initSDL2();
+    consWindow();
+    consContext();
+    setupImgui();
+}
+
+DebuggerImgui::~DebuggerImgui()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
+    SDL_GL_DeleteContext(gl_context);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }

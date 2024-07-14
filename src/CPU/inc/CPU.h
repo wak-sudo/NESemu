@@ -9,32 +9,11 @@
 #include "FlagsReg.h"
 #include "StackReg.h"
 #include "FunPtr.h"
+#include "Symbols.h"
 
 class CPU
 {
 public:
-	CPU(u8 *mem, u64 memSize);
-	~CPU();
-	void PowerUp();
-	void ExecutionStep();
-	void SwapMemory(u8 *mem, u64 memSize, bool deleteOld = false);
-
-	void IRQ();
-	void NMI();
-	void RESET();
-
-	// Regs:
-	u16 getRegPC() const;
-	u8 getRegA() const; // ACC
-	u8 getRegX() const;
-	u8 getRegY() const;
-	u8 getRegSP() const;
-	u8 getRegFlagsVal() const;
-	FlagsReg getRegFlagsObj() const;
-	u8 getCurrentIns() const; // this may only be needed for debug.
-
-	void LoadBinary(std::string filePath, u16 startingPoint);
-
 	enum CPU_STATE
 	{
 		IRQ_SIG,
@@ -74,9 +53,31 @@ public:
 		Rel,
 	};
 
-	std::tuple<u8, CPU::ADR_MODE, u8> getOpcodeInfo(u8 opcode) const;
+	CPU(u8 *mem, u64 memSize);
+	~CPU();
+	void PowerUp();
+	void ExecutionStep();
+	void SwapMemory(u8 *mem, u64 memSize, bool deleteOld = false);
 
+	void IRQ();
+	void NMI();
+	void RESET();
+
+	// Regs:
+	u16 getRegPC() const;
+	u8 getRegA() const; // ACC
+	u8 getRegX() const;
+	u8 getRegY() const;
+	u8 getRegSP() const;
+	u8 getRegFlagsVal() const;
+	FlagsReg getRegFlagsObj() const;
 	CPU_STATE getState() const;
+
+	void LoadBinary(std::string filePath, u16 startingPoint);
+
+	u8 getCurrentIns() const; // this may only be needed for debug.
+
+	std::tuple<Symbols::OP_SYM, u8, CPU::ADR_MODE, u8> getOpcodeInfo(u8 opcode) const;
 
 private:
 	const u16 IRQ_VECTOR = 0xFFFE;
@@ -91,6 +92,14 @@ private:
 	static const std::unordered_map<u8, std::tuple<u8, FunPtr, ADR_MODE>> OpTable;
 	static const std::unordered_map<ADR_MODE, u8> AdrModeToBytes;
 	static const std::unordered_map<CPU_STATE, FunPtr> CpuStateToFun;
+
+	// Debug related:
+	struct FunPtrHasher
+	{
+		size_t operator()(const FunPtr &p) const;
+	};
+	static const std::unordered_map<FunPtr, Symbols::OP_SYM, FunPtrHasher> opcodeFunToSym;
+	// End of Debug related:
 
 	u8 *Memory; // Is is the best way?
 	u64 MemorySize;

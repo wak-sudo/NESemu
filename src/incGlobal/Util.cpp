@@ -11,9 +11,11 @@ std::string Util::toSystem(u64 val, NumericalSystems targetSys)
 {
     const char symTable[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
+    if(val == 0) return "0";
+
     long base = 2;
     if (targetSys == DEC)
-        return std::to_string(val);
+        return std::to_string(val).c_str();
     else if (targetSys == BIN)
         base = 2;
     else if (targetSys == HEX)

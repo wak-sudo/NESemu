@@ -3,6 +3,8 @@
 #include "Util.h"
 #include "Porv.h"
 
+#include <bitset> // for std::hash
+
 class CPU; // forward declaration.
 
 // Polimorphic type.
@@ -38,6 +40,9 @@ public:
     FunPtr(vFunOne8Arg ptr) : u8Arg(ptr), type(VFU8) {}
     FunPtr(vFunOne8Ptr ptr) : ptru8Arg(ptr), type(VFPU8) {}
     FunPtr(vFunOne16Arg ptr) : u16Arg(ptr), type(VFU16) {}
+
+    bool operator==(const FunPtr& other) const;
+    size_t hash() const;
 
     void invoke(CPU *obj, Porv arg);
 };

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "Debugger.h"
+#include "DebuggerImgui.h"
 
 using namespace std;
 
@@ -29,7 +29,7 @@ int main()
 
 	//ImGui::ShowDemoWindow();
 
-	Debugger debProg(&MOSCPU, mem, memSize);
+	DebuggerImgui debProg(&MOSCPU, mem, memSize);
 	debProg.show();
 
 	delete[] mem;

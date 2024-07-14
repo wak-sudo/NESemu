@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(PRJ_NAME Debugger)
+set(PRJ_NAME DebuggerImgui)
 
 project(${PRJ_NAME})
 
@@ -13,10 +13,13 @@ set(SOURCE_DIR src)
 set(INCLUDE_DIR inc)
 
 set(SRC_FILES
-    ${SOURCE_DIR}/Cons.cpp
-    ${SOURCE_DIR}/Print.cpp
+    ${SOURCE_DIR}/Debugger.cpp
+    ${SOURCE_DIR}/DebuggerImgui.cpp
+    ${SOURCE_DIR}/DebuggerImguiPrint.cpp
+    ${SOURCE_DIR}/DebuggerImguiCons.cpp
+    ${SOURCE_DIR}/DebuggerStrings.cpp
     ${SOURCE_DIR}/Tables.cpp
-    ${SOURCE_DIR}/Debugger.cpp)
+    )
 
 add_library(${PRJ_NAME} STATIC ${SRC_FILES})
 target_include_directories(${PRJ_NAME} PUBLIC ${INCLUDE_DIR})

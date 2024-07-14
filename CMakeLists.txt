@@ -34,7 +34,7 @@ target_link_libraries(${PRJ_NAME} PRIVATE CPU)
 # Debugger:
 add_subdirectory(src/Debugger) # can it be done another way?
 target_include_directories(${PRJ_NAME} PRIVATE src/Debugger/inc)
-target_link_libraries(${PRJ_NAME} PRIVATE Debugger)
+target_link_libraries(${PRJ_NAME} PRIVATE DebuggerImgui)
 
 # Util:
 add_subdirectory(src/incGlobal) # can it be done another way?
