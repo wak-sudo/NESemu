@@ -4,7 +4,7 @@
 
 void DebuggerImgui::showCPUstate()
 {
-    ImGui::SetNextWindowSize(ImVec2(640, 780), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(340, 550));
     bool closed;
     ImGui::Begin("CPU state", &closed);
 
@@ -34,6 +34,9 @@ void DebuggerImgui::show()
     bool done;
 
     MemoryEditor mem_edit;
+    MemoryEditor stack_edit;
+
+    u8* const stackMem = memory + StackReg::STACK_OFFSET;
 
     while (!done)
     {
@@ -49,7 +52,8 @@ void DebuggerImgui::show()
 
         startFrame();
 
-        mem_edit.DrawWindow("Memory Editor", memory, memorySize);
+        mem_edit.DrawWindow("Memory view", memory, memorySize);
+        stack_edit.DrawWindow("Stack view", stackMem, StackReg::STACK_MAX_SIZE);
 
         showCPUstate();
 

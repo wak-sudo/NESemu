@@ -22,7 +22,7 @@ void DebuggerImgui::printRadioButtons()
 
 void DebuggerImgui::printRegisters()
 {
-    if (ImGui::CollapsingHeader("Regs"))
+    if (ImGui::CollapsingHeader("Regs", ImGuiTreeNodeFlags_DefaultOpen))
     {
         if (ImGui::BeginTable("table", 3))
         {
@@ -39,7 +39,7 @@ void DebuggerImgui::printRegisters()
 
 void DebuggerImgui::printFlags()
 {
-    if (ImGui::CollapsingHeader("Flags"))
+    if (ImGui::CollapsingHeader("Flags", ImGuiTreeNodeFlags_DefaultOpen))
     {
         if (ImGui::BeginTable("table", 3))
         {
@@ -59,7 +59,7 @@ void DebuggerImgui::printFlags()
 
 void DebuggerImgui::printOpcode()
 {
-    if (ImGui::CollapsingHeader("Current instruction"))
+    if (ImGui::CollapsingHeader("Current instruction", ImGuiTreeNodeFlags_DefaultOpen))
     {
         if (ImGui::BeginTable("table", 3))
         {
