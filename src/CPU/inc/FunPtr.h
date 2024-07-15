@@ -25,10 +25,12 @@ class FunPtr
         vFunOne8Arg u8Arg;
         vFunOne8Ptr ptru8Arg;
         vFunOne16Arg u16Arg;
+        unsigned long hashTag;
     };
 
     enum FunTypes
     {
+        EMPTY_PTR,
         VFZ,
         VFU8,
         VFPU8,
@@ -40,8 +42,10 @@ public:
     FunPtr(vFunOne8Arg ptr) : u8Arg(ptr), type(VFU8) {}
     FunPtr(vFunOne8Ptr ptr) : ptru8Arg(ptr), type(VFPU8) {}
     FunPtr(vFunOne16Arg ptr) : u16Arg(ptr), type(VFU16) {}
+    FunPtr() : hashTag(0), type(EMPTY_PTR) {}
 
     bool operator==(const FunPtr& other) const;
+    FunPtr& operator=(const FunPtr& other);
     size_t hash() const;
 
     void invoke(CPU *obj, Porv arg);

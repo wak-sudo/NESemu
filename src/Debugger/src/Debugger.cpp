@@ -1,7 +1,5 @@
 #include "Debugger.h"
 
-#include <iostream>
-
 Debugger::Debugger(CPU *cpuObjArg, u8 *memoryArg, u64 memorySizeArg)
 {
     cpuObj = cpuObjArg;
@@ -13,6 +11,7 @@ Debugger::Debugger(CPU *cpuObjArg, u8 *memoryArg, u64 memorySizeArg)
 
 void Debugger::step()
 {
+    cpuObj->executeIns();
     updateVals();
 }
 
@@ -38,7 +37,7 @@ void Debugger::updateOpcodeFields()
 
     OpcodeSym.update(currentOpSym);
     AdrMode.update(currentMode);
-    Argument.update(getArgument(currentBytes));
+    Argument.update(getArgument(currentBytes-1));
     NoOfBytes.update(currentBytes);
     OpcodeNumber.update(currentOpcode);
     Cycles.update(currentCycles);

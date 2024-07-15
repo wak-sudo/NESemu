@@ -4,10 +4,10 @@
 
 typedef unsigned char u8;
 typedef unsigned short u16;
+typedef unsigned short u32;
+typedef unsigned long u64;
 typedef char i8;
 typedef short i16;
-typedef unsigned long u64;
-
 
 namespace Util
 {
@@ -18,7 +18,11 @@ namespace Util
         HEX,
         BIN
     };
-    std::string toSystem(u64 val, NumericalSystems targetSys);
+    std::string toSystemGeneric(u64 val, NumericalSystems targetSys);
+    std::string toSystem(u8 val, NumericalSystems targetSys);
+    std::string toSystem(u16 val, NumericalSystems targetSys);
+
+    void debug(std::string str);
 
     u16 getBytesFromMemAfterIdx(u8* mem, u16 idx, u16 numberOfBytes);
 }

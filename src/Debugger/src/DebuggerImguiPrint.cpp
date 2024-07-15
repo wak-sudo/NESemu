@@ -43,14 +43,15 @@ void DebuggerImgui::printFlags()
     {
         if (ImGui::BeginTable("table", 3))
         {
-            printSingleRowWithColor("Carry", CarryFlag_display.current, CarryFlag_display.old);
-            printSingleRowWithColor("Zero", ZeroFlag_display.current, ZeroFlag_display.old);
-            printSingleRowWithColor("Interrupt Disable", IndFlag_display.current, IndFlag_display.old);
-            printSingleRowWithColor("Decimal", DecimalFlag_display.current, DecimalFlag_display.old);
-            printSingleRowWithColor("Break", BreakFlag_display.current, BreakFlag_display.old);
-            printSingleRowWithColor("Unused", UnusedFlag_display.current, UnusedFlag_display.old);
-            printSingleRowWithColor("Overflow", OverflowFlag_display.current, OverflowFlag_display.old);
             printSingleRowWithColor("Negative", NegativeFlag_display.current, NegativeFlag_display.old);
+            printSingleRowWithColor("Overflow", OverflowFlag_display.current, OverflowFlag_display.old);
+            printSingleRowWithColor("Unused", UnusedFlag_display.current, UnusedFlag_display.old);
+            printSingleRowWithColor("Break", BreakFlag_display.current, BreakFlag_display.old);
+            printSingleRowWithColor("Decimal", DecimalFlag_display.current, DecimalFlag_display.old);
+            printSingleRowWithColor("Interrupt Disable", IndFlag_display.current, IndFlag_display.old);
+            printSingleRowWithColor("Zero", ZeroFlag_display.current, ZeroFlag_display.old);
+            printSingleRowWithColor("Carry", CarryFlag_display.current, CarryFlag_display.old);
+  
             ImGui::EndTable();
         }
     }

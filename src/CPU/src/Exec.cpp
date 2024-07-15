@@ -3,10 +3,9 @@
 #include <stdexcept>
 #include <string>
 
-void CPU::ExecutionStep()
+/*void CPU::ExecutionStep()
 {
 	// Todo: page crossing, branch taking
-	typedef std::unordered_map<u8, std::tuple<u8, FunPtr, CPU::ADR_MODE>>::const_iterator locIter;
 
 	if (CPUstate != POWER_OFF)
 	{
@@ -18,28 +17,83 @@ void CPU::ExecutionStep()
 		const u8 cycles = std::get<0>(opInfo);
 		const FunPtr fun = std::get<1>(opInfo);
 		const ADR_MODE mode = std::get<2>(opInfo);
-		const u8 noOfBytes = AdrModeToBytes.find(mode)->second; // all modes are inluded so no check, maybe chagne this to a normal array?
+		const u8 noOfBytes = AdrModeToBytes.find(mode)->second;
 		executeNextOpcode(fun, noOfBytes, mode);
 
 		// Handles interupts.
-		auto it = CpuStateToFun.find(CPUstate);
+		/*auto it = CpuStateToFun.find(CPUstate);
 		if (it != CpuStateToFun.end())
 		{
 			FunPtr fun = it->second;
-
 		}
 		//	().invoke(this, Porv());
 	}
+}*/
+
+void CPU::fetch()
+{
+	typedef std::unordered_map<u8, std::tuple<u8, FunPtr, CPU::ADR_MODE>>::const_iterator locIter;
+
+	u8 opcodeNumber = Memory[PC];
+	const locIter opMapIt = OpTable.find(opcodeNumber);
+	if (opMapIt == OpTable.end())
+		throw std::runtime_error("Unknown opcode: " + std::to_string(opcodeNumber));
+	const auto &opInfo = opMapIt->second;
+	const ADR_MODE mode = std::get<2>(opInfo);
+	const u8 noOfBytes = AdrModeToBytes.find(mode)->second;
+	const u16 val = Util::getBytesFromMemAfterIdx(Memory, PC, noOfBytes - 1);
+
+	PC += noOfBytes; // WE SET PC TO NEXT INS BEFORE ADRESS HANDLING AND EXEC.
+
+	pendingIns.cyclesReq = std::get<0>(opInfo);
+	pendingIns.opcode = std::get<1>(opInfo);
+	pendingIns.argument = handleAdressing(val, mode);
+
+	// Handles interupts.
+	/*auto it = CpuStateToFun.find(CPUstate);
+	if (it != CpuStateToFun.end())
+	{
+		FunPtr fun = it->second;
+	}*/
+}
+
+void CPU::executeCycles(u32 cycles)
+{
+	if (CPUstate == POWER_OFF)
+		return;
+
+	while (cycles != 0)
+	{
+		if (pendingIns.cyclesReq <= 0)
+			executeIns();
+
+		if (pendingIns.cyclesReq > cycles)
+		{
+			pendingIns.cyclesReq -= cycles;
+			cycles = 0;
+		}
+		else
+		{
+			cycles -= pendingIns.cyclesReq;
+			pendingIns.cyclesReq = 0;
+		}
+	}
+}
+
+void CPU::executeIns()
+{
+	fetch();
+	pendingIns.opcode.invoke(this, pendingIns.argument);
 }
 
 // Execute an opcode.
-void CPU::executeNextOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode)
+/*void CPU::executeNextOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode)
 {
 	u16 val = Util::getBytesFromMemAfterIdx(Memory, PC, noOfBytes - 1);
 	PC += noOfBytes; // WE SET PC TO NEXT INS BEFORE ADRESS HANDLING AND EXEC.
 	Porv arg = handleAdressing(val, mode);
 	fun.invoke(this, arg);
-}
+}*/
 
 void CPU::Interupt(u16 vector)
 {
@@ -48,8 +102,10 @@ void CPU::Interupt(u16 vector)
 	SP->pushStack(PC + 1);
 	SP->pushStack(Flags.getVal());
 	Flags.setFlagInd(1); // should it be done before?
+	//Util::debug(std::to_string(Memory[vector]));
+	//Util::debug(std::to_string(Memory[vector+1]));
 	PC = Util::mergeBytes(Memory[vector], Memory[vector + 1]);
-	CPUstate = NORMAL_STATE;
+	//CPUstate = NORMAL_STATE;
 }
 
 // Sometimes this functio needs to return a number, sometime a pointer to addres in memory,
@@ -115,18 +171,18 @@ Porv CPU::handleAdressing(u16 val, ADR_MODE mode)
 	return result;
 }
 
-void CPU::IRQ()
+void CPU::IRQ_INT()
 {
 	if (Flags.getFlagInd() == 0)
 		Interupt(IRQ_VECTOR);
 }
 
-void CPU::NMI()
+void CPU::NMI_INT()
 {
 	Interupt(NMI_VECTOR);
 }
 
-void CPU::RESET()
+void CPU::RESET_INT()
 {
 	Interupt(RESET_VECTOR);
 }

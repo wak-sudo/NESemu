@@ -26,7 +26,7 @@ void CPU::PowerUp()
 	PC = 0;
 	Flags.reset();
 	CPUstate = NORMAL_STATE;
-	RESET(); // Interupt signal.
+	RESET_INT(); // Interupt signal.
 }
 
 void CPU::SwapMemory(u8 *mem, u64 memSize, bool deleteOld)
@@ -50,7 +50,7 @@ std::tuple<Symbols::OP_SYM, u8, CPU::ADR_MODE, u8> CPU::getOpcodeInfo(u8 opcode)
 	const ADR_MODE mode = std::get<2>(itOpTable->second);
 
 	const auto itSymTable = opcodeFunToSym.find(opFun);
-	if(itSymTable == opcodeFunToSym.end())
+	if (itSymTable == opcodeFunToSym.end())
 		return emptyTuple;
 
 	const Symbols::OP_SYM opSym = itSymTable->second;
@@ -58,7 +58,7 @@ std::tuple<Symbols::OP_SYM, u8, CPU::ADR_MODE, u8> CPU::getOpcodeInfo(u8 opcode)
 	auto itBytes = AdrModeToBytes.find(mode);
 	if (itBytes == AdrModeToBytes.end())
 		return emptyTuple;
-	
+
 	const u8 bytes = itBytes->second;
 	return std::make_tuple(opSym, cycles, mode, bytes);
 }

@@ -56,12 +56,15 @@ public:
 	CPU(u8 *mem, u64 memSize);
 	~CPU();
 	void PowerUp();
-	void ExecutionStep();
+	// void ExecutionStep();
 	void SwapMemory(u8 *mem, u64 memSize, bool deleteOld = false);
 
-	void IRQ();
-	void NMI();
-	void RESET();
+	void executeCycles(u32 cycles);
+	void executeIns();
+
+	void IRQ_INT();
+	void NMI_INT();
+	void RESET_INT();
 
 	// Regs:
 	u16 getRegPC() const;
@@ -73,25 +76,32 @@ public:
 	FlagsReg getRegFlagsObj() const;
 	CPU_STATE getState() const;
 
-	void LoadBinary(std::string filePath, u16 startingPoint);
-
 	u8 getCurrentIns() const; // this may only be needed for debug.
 
 	std::tuple<Symbols::OP_SYM, u8, CPU::ADR_MODE, u8> getOpcodeInfo(u8 opcode) const;
 
+	static const u16 IRQ_VECTOR = 0xFFFE;
+	static const u16 RESET_VECTOR = 0xFFFC;
+	static const u16 NMI_VECTOR = 0xFFFA;
+
+	static constexpr double COL_SUB_FREQ = 3.579545;
+	static constexpr double MASTER_CLOCK_FREQ = 21.477272;
+	static constexpr double CLOCK_DIVISOR = 12;
+	static constexpr double CPUCLOCK_FREQ = 1.789773;
+
 private:
-	const u16 IRQ_VECTOR = 0xFFFE;
-	const u16 RESET_VECTOR = 0xFFFC;
-	const u16 NMI_VECTOR = 0xFFFA;
-
-	const double COL_SUB_FREQ = 3.579545;
-	const double MASTER_CLOCK_FREQ = 21.477272;
-	const double CLOCK_DIVISOR = 12;
-	const double CPUCLOCK_FREQ = 1.789773;
-
 	static const std::unordered_map<u8, std::tuple<u8, FunPtr, ADR_MODE>> OpTable;
 	static const std::unordered_map<ADR_MODE, u8> AdrModeToBytes;
 	static const std::unordered_map<CPU_STATE, FunPtr> CpuStateToFun;
+
+	struct Ins
+	{
+		FunPtr opcode;
+		u8 cyclesReq;
+		Porv argument;
+	} pendingIns;
+
+	void fetch();
 
 	// Debug related:
 	struct FunPtrHasher
@@ -112,7 +122,7 @@ private:
 
 	void Interupt(u16 vector);
 	Porv handleAdressing(u16 val, ADR_MODE mode);
-	void executeNextOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode);
+	// void executeNextOpcode(FunPtr fun, u8 noOfBytes, ADR_MODE mode);
 
 	// Opcodes:
 

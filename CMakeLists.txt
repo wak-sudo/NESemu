@@ -5,7 +5,7 @@ set(PRJ_NAME NESemu)
 project(${PRJ_NAME})
 add_executable(${PRJ_NAME} main.cpp)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #[[ GoogleTest: # there is a problem with imgui, fix this.
@@ -40,3 +40,8 @@ target_link_libraries(${PRJ_NAME} PRIVATE DebuggerImgui)
 add_subdirectory(src/incGlobal) # can it be done another way?
 target_include_directories(${PRJ_NAME} PRIVATE src/incGlobal)
 target_link_libraries(${PRJ_NAME} PRIVATE Util)
+
+# RomLoader:
+add_subdirectory(src/RomLoader) # can it be done another way?
+target_include_directories(${PRJ_NAME} PRIVATE src/RomLoader/inc)
+target_link_libraries(${PRJ_NAME} PRIVATE RomLoader)

@@ -47,7 +47,7 @@ void DebuggerImgui::show()
                 done = true;
         }
 
-        newFrame();
+        startFrame();
 
         mem_edit.DrawWindow("Memory Editor", memory, memorySize);
 
@@ -57,7 +57,7 @@ void DebuggerImgui::show()
     }
 }
 
-void DebuggerImgui::newFrame()
+void DebuggerImgui::startFrame()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();

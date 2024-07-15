@@ -31,7 +31,12 @@ const char *DebuggerStrings::cpuStateToString(CPU::CPU_STATE state) const
     return it->second;
 }
 
-std::string DebuggerStrings::valToStrBase(u64 val) const
+std::string DebuggerStrings::valToStrBase(u8 val) const
+{
+    return Util::toSystem(val, numeralSystem);
+}
+
+std::string DebuggerStrings::valToStrBase(u16 val) const
 {
     return Util::toSystem(val, numeralSystem);
 }
@@ -98,6 +103,7 @@ void DebuggerStrings::updateDisplayU8()
 
 void DebuggerStrings::step()
 {
+    cpuObj->executeIns();
     update();
 }
 

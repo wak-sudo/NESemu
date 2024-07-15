@@ -18,9 +18,9 @@ const std::unordered_map<CPU::ADR_MODE, u8> CPU::AdrModeToBytes = {
 };
 
 const std::unordered_map<CPU::CPU_STATE, FunPtr> CPU::CpuStateToFun = {
-	{IRQ_SIG, &CPU::IRQ},
-	{NMI_SIG, &CPU::NMI},
-	{RESET_SIG, &CPU::RESET},
+	{IRQ_SIG, &CPU::IRQ_INT},
+	{NMI_SIG, &CPU::NMI_INT},
+	{RESET_SIG, &CPU::RESET_INT},
 };
 
 // Opcode -> <Cycles, Function, AdrMode>

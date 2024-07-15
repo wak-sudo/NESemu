@@ -13,7 +13,8 @@ class DebuggerStrings : public Debugger
     const char *cpuStateToString(CPU::CPU_STATE state) const;
     const char *adrModeToString(CPU::ADR_MODE mode) const;
     const char *opcodeSymToString(Symbols::OP_SYM symbol) const;
-    std::string valToStrBase(u64 val) const;
+    std::string valToStrBase(u8 val) const;
+    std::string valToStrBase(u16 val) const;
 
     void updateDisplayFlags();
     void updateDisplayU8();

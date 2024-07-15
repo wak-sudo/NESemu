@@ -27,7 +27,7 @@ class DebuggerImgui : public DebuggerStrings
     void consWindow();
     void setupImgui();
 
-    void newFrame();
+    void startFrame();
     void endFrame();
 
     // Print:

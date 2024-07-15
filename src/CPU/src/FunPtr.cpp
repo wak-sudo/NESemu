@@ -17,6 +17,10 @@ void FunPtr::invoke(CPU *obj, Porv arg)
         break;
     case VFU16:
         (obj->*u16Arg)((u16)arg.val);
+        break;
+    case EMPTY_PTR:
+        // nothing
+        break;
     default:
         throw std::runtime_error("FunPtr::invoke unimplemented branch.");
         break;
@@ -42,6 +46,8 @@ bool FunPtr::operator==(const FunPtr &other) const
         break;
     case VFU16:
         return this->u16Arg == other.u16Arg;
+    case EMPTY_PTR:
+        return true;
     default:
         throw std::runtime_error("FunPtr::invoke unimplemented branch.");
         break;
@@ -50,5 +56,12 @@ bool FunPtr::operator==(const FunPtr &other) const
 
 size_t FunPtr::hash() const
 {
-    return std::hash<const void *>()(static_cast<const void *>(&zeroArg));
+    return std::hash<unsigned long>()(hashTag);
+}
+
+FunPtr& FunPtr::operator=(const FunPtr& other)
+{
+    type = other.type;
+    zeroArg = other.zeroArg;
+    return *this;
 }
