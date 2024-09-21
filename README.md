@@ -1,6 +1,6 @@
+# NESemu
 ![Debugger](screenshots/debbuger.png)
-
-== Build ==
+## Build
 
 Download dependencies:
 
@@ -8,6 +8,6 @@ Download dependencies:
 
 Use cmake with make to build.
 
-== State ==
+## State
 
 CPU needs testing and fixes. Debbuger is operational. Rest of the components ought to be written.
