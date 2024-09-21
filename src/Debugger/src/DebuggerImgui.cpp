@@ -2,6 +2,9 @@
 
 #include "imgui_memory_editor.h"
 
+#include <chrono>
+#include <thread>
+
 void DebuggerImgui::showCPUstate()
 {
     ImGui::SetNextWindowSize(ImVec2(340, 550));
@@ -58,6 +61,8 @@ void DebuggerImgui::show()
         showCPUstate();
 
         endFrame();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(17)); // let the program rest. 
     }
 }
 

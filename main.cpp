@@ -16,7 +16,7 @@ int main()
 	if (loadBin)
 	{
 		const u16 entryPoint = 0x2000;
-		RomLoader::loadFileToMemory("../ROMs/prog.bin", mem, memSize, entryPoint);
+		RomLoader::loadFileToMemory("../ROMs/progA.bin", mem, memSize, entryPoint);
 		RomLoader::writeVectorsToRom(mem, entryPoint);
 	}
 
