@@ -1,12 +1,13 @@
-Requires:
-    - SDL2
-For debug:
-    - ImGUI
-    - GoogleTest
-    - GL
+![Debugger](screenshots/debbuger.png)
 
-To download dependencies:
+== Build ==
 
-sudo apt install cmake libsdl2-dev g++ 
+Download dependencies:
 
-Now you can build.
+```sudo apt install cmake libsdl2-dev g++```
+
+Use cmake with make to build.
+
+== State ==
+
+CPU needs testing and fixes. Debbuger is operational. Rest of the components ought to be written.
