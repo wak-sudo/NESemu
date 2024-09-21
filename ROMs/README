@@ -1,0 +1,11 @@
+After the end of each program, what follows is memory trash.
+
+== progA.bin ==
+
+LDA #00 (A9 00) // load 0 to ACC
+LDX #10 (A2 0A) // load 10 to X
+STX $00 (86 00) // store X to 0x0000
+LDY #20 (A0 14) // load 20 to Y
+STX $01 (84 01) // store Y to 0x0001
+ADC $00 (65 00) // add 0x0000 to ACC
+ADC $01 (65 01) // add 0x0001 to ACC
